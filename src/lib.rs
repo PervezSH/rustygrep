@@ -5,7 +5,9 @@ use std::fs; // to handle files
 // Box<dyn Error> means the function will return a type that implements the Error trait
 pub fn run(params: Params) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(params.file)?;
-    print!("With text: \n{}", contents);
+    for line in search(&params.query, &contents) {
+        println!("{}", line);
+    }
     Ok(())
 }
 
@@ -23,6 +25,16 @@ impl<'a> Params<'a> {
         let file = &args[2];
         Ok(Params { query, file })
     }
+}
+
+pub fn search<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
+    let mut results = Vec::new();
+    for line in contents.lines() {
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+    results
 }
 
 #[cfg(test)]

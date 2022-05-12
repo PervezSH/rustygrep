@@ -8,7 +8,7 @@ fn main() {
         println!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
-    println!("Searching for {} in {}", params.query, params.file);
+    println!("Searching for {} in {}...", params.query, params.file);
     if let Err(e) = rustygrep::run(params) {
         println!("Application error: {}", e);
         process::exit(1);
