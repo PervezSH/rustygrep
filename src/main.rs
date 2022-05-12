@@ -1,4 +1,5 @@
 use std::env; // to use args function provided by rust's standard library
+use std::error::Error;
 use std::fs; // to handle files
 use std::process; // to exit program without panicking
 
@@ -8,12 +9,17 @@ fn main() {
         println!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
-
-    print!("Searching for {} in file {}", params.query, params.file);
-
-    let contents =
-        fs::read_to_string(params.file).expect("Something went wrong while reading the file!");
+    if let Err(e) = run(params) {
+        println!("Application error: {}", e);
+        process::exit(1);
+    }
+}
+// in success return unit type and in error case we return an error
+// Box<dyn Error> means the function will return a type that implements the Error trait
+fn run(params: Params) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(params.file)?;
     print!(" with text: \n{}", contents);
+    Ok(())
 }
 
 struct Params<'a> {
