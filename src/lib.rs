@@ -1,3 +1,4 @@
+use std::env;
 use std::error::Error;
 use std::fs; // to handle files
 
@@ -5,7 +6,12 @@ use std::fs; // to handle files
 // Box<dyn Error> means the function will return a type that implements the Error trait
 pub fn run(params: Params) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(params.file)?;
-    for line in search(&params.query, &contents) {
+    let results = if params.case_sensitive {
+        search_case_insensitive(&params.query, &contents)
+    } else {
+        search(&params.query, &contents)
+    };
+    for line in results {
         println!("{}", line);
     }
     Ok(())
@@ -14,6 +20,7 @@ pub fn run(params: Params) -> Result<(), Box<dyn Error>> {
 pub struct Params<'a> {
     pub query: &'a String,
     pub file: &'a String,
+    pub case_sensitive: bool,
 }
 
 impl<'a> Params<'a> {
@@ -23,7 +30,12 @@ impl<'a> Params<'a> {
         }
         let query = &args[1];
         let file = &args[2];
-        Ok(Params { query, file })
+        let case_sensitive = env::var("CASE_SENSITIVE").is_err();
+        Ok(Params {
+            query,
+            file,
+            case_sensitive,
+        })
     }
 }
 
