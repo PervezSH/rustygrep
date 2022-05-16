@@ -21,7 +21,7 @@ git clone https://github.com/PervezSH/rustygrep.git
 ```
 - Change the current directory to the working directory
 ```sh
-cd token-vesting
+cd rustygrep
 ```
 - To build, use cargo build
 ```sh
